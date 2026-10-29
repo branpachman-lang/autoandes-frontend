@@ -1,0 +1,4 @@
+.resumen-reporte { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; padding:20px; margin-bottom:24px; background:#f4f6fa; border-radius:9px; }
+.resumen-reporte div { display:flex; flex-direction:column; gap:10px; }
+.resumen-reporte small { color:#64748b; }.resumen-reporte strong { font-size:27px; color:#0f2e5c; font-variant-numeric:tabular-nums; }
+@media(max-width:650px) { .resumen-reporte { grid-template-columns:1fr; } }

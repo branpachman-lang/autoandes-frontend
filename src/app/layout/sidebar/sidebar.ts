@@ -12,5 +12,6 @@ import { MENU } from '../../core/config/menu';
 export class Sidebar {
   private readonly auth = inject(AuthService);
   protected readonly menu = computed(() =>
-    MENU.filter(item => !item.permiso || this.auth.tienePermiso(item.permiso)));
+    MENU.filter((item) => !item.permiso || this.auth.tienePermiso(item.permiso)),
+  );
 }

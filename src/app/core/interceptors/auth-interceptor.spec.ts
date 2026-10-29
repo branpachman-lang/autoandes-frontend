@@ -41,11 +41,15 @@ describe('Interceptores de seguridad', () => {
     const http = TestBed.inject(HttpClient);
     const peticiones = TestBed.inject(HttpTestingController);
     http.get(`${environment.apiUrl}/servicios`).subscribe({ error: () => {} });
-    peticiones.expectOne(`${environment.apiUrl}/servicios`).flush({}, { status: 403, statusText: 'Forbidden' });
+    peticiones
+      .expectOne(`${environment.apiUrl}/servicios`)
+      .flush({}, { status: 403, statusText: 'Forbidden' });
     expect(cerrarSesion).not.toHaveBeenCalled();
 
     http.get('https://otro-ejemplo.test/recurso').subscribe({ error: () => {} });
-    peticiones.expectOne('https://otro-ejemplo.test/recurso').flush({}, { status: 401, statusText: 'Unauthorized' });
+    peticiones
+      .expectOne('https://otro-ejemplo.test/recurso')
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
     expect(cerrarSesion).not.toHaveBeenCalled();
 
     http.post(`${environment.apiUrl}/auth/login`, {}).subscribe({ error: () => {} });
@@ -55,7 +59,9 @@ describe('Interceptores de seguridad', () => {
     expect(cerrarSesion).not.toHaveBeenCalled();
 
     http.get(`${environment.apiUrl}/servicios`).subscribe({ error: () => {} });
-    peticiones.expectOne(`${environment.apiUrl}/servicios`).flush({}, { status: 401, statusText: 'Unauthorized' });
+    peticiones
+      .expectOne(`${environment.apiUrl}/servicios`)
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
     expect(cerrarSesion).toHaveBeenCalledOnce();
   });
 });

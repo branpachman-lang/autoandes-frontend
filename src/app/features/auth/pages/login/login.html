@@ -22,15 +22,23 @@
       }
 
       <label for="clave">Contraseña</label>
-      <input id="clave" [type]="verClave() ? 'text' : 'password'"
-        formControlName="password" autocomplete="current-password" />
+      <input
+        id="clave"
+        [type]="verClave() ? 'text' : 'password'"
+        formControlName="password"
+        autocomplete="current-password"
+      />
       @if (form.controls.password.touched && form.controls.password.invalid) {
         <small class="error">Ingrese su contraseña.</small>
       }
 
       <label class="ver" for="mostrar-clave">
-        <input id="mostrar-clave" type="checkbox" [checked]="verClave()"
-          (change)="verClave.set(!verClave())" />
+        <input
+          id="mostrar-clave"
+          type="checkbox"
+          [checked]="verClave()"
+          (change)="verClave.set(!verClave())"
+        />
         Mostrar contraseña
       </label>
 

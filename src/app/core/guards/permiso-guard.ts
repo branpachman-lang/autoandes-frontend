@@ -11,7 +11,7 @@ import { AuthService } from '../auth/auth-service';
  * Es una ayuda para la experiencia de usuario: la protección real la hace
  * el backend, que responde 403 aunque alguien modifique el JavaScript.
  */
-export const permisoGuard: CanActivateFn = route => {
+export const permisoGuard: CanActivateFn = (route) => {
   const permiso = route.data['permiso'] as Permiso | undefined;
   if (!permiso || inject(AuthService).tienePermiso(permiso)) return true;
   return inject(Router).createUrlTree(['/acceso-denegado']);

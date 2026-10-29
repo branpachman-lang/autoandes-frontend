@@ -1,10 +1,119 @@
-<section class="pagina"><a class="volver" routerLink="/ordenes">← Volver a órdenes</a>
-@if(error()) { <div class="alerta" role="alert">{{ error() }} <button class="boton pequeno" (click)="cargar()">Reintentar</button></div> }
-@if(cargando()) { <p class="estado-pagina">Cargando detalle…</p> }
-@else if(orden();as o) { <div class="encabezado"><div><p class="etiqueta">Orden de servicio</p><h1>{{ o.numero }}</h1><p class="subtitulo">{{ o.fecha | date:'dd/MM/yyyy HH:mm' }} · Registrada por {{ o.usuarioRegistro }}</p></div><div class="acciones"><span class="badge" [class.anulada]="o.estado==='ANULADA'">{{ o.estado==='REGISTRADA' ? 'Registrada' : 'Anulada' }}</span>@if(o.estado==='REGISTRADA') { <button class="boton peligro" (click)="abrirAnulacion()" *appSiPermiso="'ORDEN_ANULAR'">Anular orden</button> }</div></div>
-@if(nueva() && o.estado==='REGISTRADA') { <p class="aviso exito" role="status">La orden {{ o.numero }} se registró correctamente.</p> }
-<div class="tarjeta datos-orden"><div><small>Vehículo</small><strong>{{ o.placa }}</strong></div><div><small>Cliente</small><strong>{{ o.clienteNombre }}</strong></div><div><small>Kilometraje</small><strong>{{ o.kilometraje }} km</strong></div></div>
-@if(o.motivoAnulacion) { <p class="alerta">Motivo de anulación: {{ o.motivoAnulacion }}</p> }
-<div class="tarjeta"><h2>Servicios realizados</h2><div class="tabla-contenedor"><table><thead><tr><th>Código</th><th>Servicio</th><th class="numero">Cantidad</th><th class="numero">Precio unitario</th><th class="numero">Subtotal</th></tr></thead><tbody>@for(d of o.detalles;track d.id) { <tr><td>{{ d.codigo }}</td><td>{{ d.servicio }}</td><td class="numero">{{ d.cantidad }}</td><td class="numero">{{ d.precioUnitario | currency:'PEN':'S/ ':'1.2-2' }}</td><td class="numero">{{ d.subtotal | currency:'PEN':'S/ ':'1.2-2' }}</td></tr> }</tbody></table></div><div class="total-detalle"><span>Total de la orden</span><strong>{{ o.total | currency:'PEN':'S/ ':'1.2-2' }}</strong></div></div> }
+<section class="pagina">
+  <a class="volver" routerLink="/ordenes">← Volver a órdenes</a>
+  @if (error()) {
+    <div class="alerta" role="alert">
+      {{ error() }} <button class="boton pequeno" (click)="cargar()">Reintentar</button>
+    </div>
+  }
+  @if (cargando()) {
+    <p class="estado-pagina">Cargando detalle…</p>
+  } @else if (orden(); as o) {
+    <div class="encabezado">
+      <div>
+        <p class="etiqueta">Orden de servicio</p>
+        <h1>{{ o.numero }}</h1>
+        <p class="subtitulo">
+          {{ o.fecha | date: 'dd/MM/yyyy HH:mm' }} · Registrada por {{ o.usuarioRegistro }}
+        </p>
+      </div>
+      <div class="acciones">
+        <span class="badge" [class.anulada]="o.estado === 'ANULADA'">{{
+          o.estado === 'REGISTRADA' ? 'Registrada' : 'Anulada'
+        }}</span>
+        @if (o.estado === 'REGISTRADA') {
+          <button class="boton peligro" (click)="abrirAnulacion()" *appSiPermiso="'ORDEN_ANULAR'">
+            Anular orden
+          </button>
+        }
+      </div>
+    </div>
+    @if (nueva() && o.estado === 'REGISTRADA') {
+      <p class="aviso exito" role="status">La orden {{ o.numero }} se registró correctamente.</p>
+    }
+    <div class="tarjeta datos-orden">
+      <div>
+        <small>Vehículo</small><strong>{{ o.placa }}</strong>
+      </div>
+      <div>
+        <small>Cliente</small><strong>{{ o.clienteNombre }}</strong>
+      </div>
+      <div>
+        <small>Kilometraje</small><strong>{{ o.kilometraje }} km</strong>
+      </div>
+    </div>
+    @if (o.motivoAnulacion) {
+      <p class="alerta">Motivo de anulación: {{ o.motivoAnulacion }}</p>
+    }
+    <div class="tarjeta">
+      <h2>Servicios realizados</h2>
+      <div class="tabla-contenedor">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Servicio</th>
+              <th class="numero">Cantidad</th>
+              <th class="numero">Precio unitario</th>
+              <th class="numero">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (d of o.detalles; track d.id) {
+              <tr>
+                <td>{{ d.codigo }}</td>
+                <td>{{ d.servicio }}</td>
+                <td class="numero">{{ d.cantidad }}</td>
+                <td class="numero">{{ d.precioUnitario | currency: 'PEN' : 'S/ ' : '1.2-2' }}</td>
+                <td class="numero">{{ d.subtotal | currency: 'PEN' : 'S/ ' : '1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="total-detalle">
+        <span>Total de la orden</span
+        ><strong>{{ o.total | currency: 'PEN' : 'S/ ' : '1.2-2' }}</strong>
+      </div>
+    </div>
+  }
 </section>
-@if(modal()) { <div class="modal-fondo"><form class="modal" [formGroup]="form" (ngSubmit)="anular()" role="dialog" aria-modal="true" aria-labelledby="titulo-anular" novalidate><h2 id="titulo-anular">Anular orden</h2><p>Solo se pueden anular órdenes registradas durante el día de hoy.</p>@if(errorAnulacion()) { <div class="alerta" role="alert">{{ errorAnulacion() }}</div> }<label for="motivo-anulacion">Motivo de anulación</label><textarea id="motivo-anulacion" formControlName="motivo" minlength="10" maxlength="200" rows="4" placeholder="Describe el motivo de la anulación"></textarea><app-field-error [control]="form.controls.motivo" [servidor]="errores()['motivo']" mensaje="El motivo debe tener entre 10 y 200 caracteres." /><div class="acciones"><button type="button" class="boton" (click)="modal.set(false)" [disabled]="anulando()">Cancelar</button><button type="submit" class="boton peligro" [disabled]="anulando()">{{ anulando() ? 'Anulando…' : 'Confirmar anulación' }}</button></div></form></div> }
+@if (modal()) {
+  <div class="modal-fondo">
+    <form
+      class="modal"
+      [formGroup]="form"
+      (ngSubmit)="anular()"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="titulo-anular"
+      novalidate
+    >
+      <h2 id="titulo-anular">Anular orden</h2>
+      <p>Solo se pueden anular órdenes registradas durante el día de hoy.</p>
+      @if (errorAnulacion()) {
+        <div class="alerta" role="alert">{{ errorAnulacion() }}</div>
+      }
+      <label for="motivo-anulacion">Motivo de anulación</label
+      ><textarea
+        id="motivo-anulacion"
+        formControlName="motivo"
+        minlength="10"
+        maxlength="200"
+        rows="4"
+        placeholder="Describe el motivo de la anulación"
+      ></textarea
+      ><app-field-error
+        [control]="form.controls.motivo"
+        [servidor]="errores()['motivo']"
+        mensaje="El motivo debe tener entre 10 y 200 caracteres."
+      />
+      <div class="acciones">
+        <button type="button" class="boton" (click)="modal.set(false)" [disabled]="anulando()">
+          Cancelar</button
+        ><button type="submit" class="boton peligro" [disabled]="anulando()">
+          {{ anulando() ? 'Anulando…' : 'Confirmar anulación' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

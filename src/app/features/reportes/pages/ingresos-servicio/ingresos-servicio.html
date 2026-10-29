@@ -1,6 +1,70 @@
-<section class="pagina"><div class="encabezado"><div><p class="etiqueta">Gestión del taller</p><h1>Ingresos por servicio</h1><p class="subtitulo">Consulta los ingresos de las órdenes registradas. Las anuladas se excluyen.</p></div></div>
-<div class="tarjeta"><form class="controles" [formGroup]="form" (ngSubmit)="cargar()"><label for="reporte-desde">Desde<input id="reporte-desde" type="date" formControlName="desde" /></label><label for="reporte-hasta">Hasta<input id="reporte-hasta" type="date" formControlName="hasta" /></label><button type="submit" class="boton principal">Consultar reporte</button><button type="button" class="boton" (click)="limpiar()">Ver todo</button></form>
-@if(error()) { <div class="alerta" role="alert">{{ error() }}</div> }
-@if(cargando()) { <p class="estado-pagina" role="status">Preparando reporte…</p> }
-@else if(!error()) { <div class="resumen-reporte"><div><small>Ingresos totales</small><strong>{{ total() | currency:'PEN':'S/ ':'1.2-2' }}</strong></div><div><small>Servicios atendidos</small><strong>{{ cantidad() }}</strong></div><div><small>Tipos de servicio</small><strong>{{ datos().length }}</strong></div></div>
-<div class="tabla-contenedor"><table><thead><tr><th>Código</th><th>Servicio</th><th class="numero">Cantidad total</th><th class="numero">Importe total</th></tr></thead><tbody>@for(r of datos();track r.codigo) { <tr><td><strong>{{ r.codigo }}</strong></td><td>{{ r.servicio }}</td><td class="numero">{{ r.cantidadTotal }}</td><td class="numero">{{ r.importeTotal | currency:'PEN':'S/ ':'1.2-2' }}</td></tr> } @empty { <tr><td colspan="4" class="estado-pagina">No hay ingresos en el período seleccionado.</td></tr> }</tbody></table></div> }</div></section>
+<section class="pagina">
+  <div class="encabezado">
+    <div>
+      <p class="etiqueta">Gestión del taller</p>
+      <h1>Ingresos por servicio</h1>
+      <p class="subtitulo">
+        Consulta los ingresos de las órdenes registradas. Las anuladas se excluyen.
+      </p>
+    </div>
+  </div>
+  <div class="tarjeta">
+    <form class="controles" [formGroup]="form" (ngSubmit)="cargar()">
+      <label for="reporte-desde"
+        >Desde<input id="reporte-desde" type="date" formControlName="desde" /></label
+      ><label for="reporte-hasta"
+        >Hasta<input id="reporte-hasta" type="date" formControlName="hasta" /></label
+      ><button type="submit" class="boton principal">Consultar reporte</button
+      ><button type="button" class="boton" (click)="limpiar()">Ver todo</button>
+    </form>
+    @if (error()) {
+      <div class="alerta" role="alert">{{ error() }}</div>
+    }
+    @if (cargando()) {
+      <p class="estado-pagina" role="status">Preparando reporte…</p>
+    } @else if (!error()) {
+      <div class="resumen-reporte">
+        <div>
+          <small>Ingresos totales</small
+          ><strong>{{ total() | currency: 'PEN' : 'S/ ' : '1.2-2' }}</strong>
+        </div>
+        <div>
+          <small>Servicios atendidos</small><strong>{{ cantidad() }}</strong>
+        </div>
+        <div>
+          <small>Tipos de servicio</small><strong>{{ datos().length }}</strong>
+        </div>
+      </div>
+      <div class="tabla-contenedor">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Servicio</th>
+              <th class="numero">Cantidad total</th>
+              <th class="numero">Importe total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of datos(); track r.codigo) {
+              <tr>
+                <td>
+                  <strong>{{ r.codigo }}</strong>
+                </td>
+                <td>{{ r.servicio }}</td>
+                <td class="numero">{{ r.cantidadTotal }}</td>
+                <td class="numero">{{ r.importeTotal | currency: 'PEN' : 'S/ ' : '1.2-2' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="estado-pagina">
+                  No hay ingresos en el período seleccionado.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

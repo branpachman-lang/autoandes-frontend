@@ -15,5 +15,4 @@ export const authGuard: CanActivateFn = (_route, state) => {
 
 /** El login solo es para quien NO ha iniciado sesión. */
 export const invitadoGuard: CanActivateFn = () =>
-  inject(AuthService).autenticado()
-    ? inject(Router).createUrlTree(['/inicio']) : true;
+  inject(AuthService).autenticado() ? inject(Router).createUrlTree(['/inicio']) : true;

@@ -10,6 +10,9 @@ export class ReporteService {
     let params = new HttpParams();
     if (desde) params = params.set('desde', desde);
     if (hasta) params = params.set('hasta', hasta);
-    return this.http.get<IngresoPorServicio[]>(`${environment.apiUrl}/reportes/ingresos-por-servicio`, { params });
+    return this.http.get<IngresoPorServicio[]>(
+      `${environment.apiUrl}/reportes/ingresos-por-servicio`,
+      { params },
+    );
   }
 }

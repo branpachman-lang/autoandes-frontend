@@ -1,14 +1,161 @@
-<section class="pagina"><a class="volver" routerLink="/ordenes">← Volver a órdenes</a><div class="encabezado"><div><p class="etiqueta">Recepción del taller</p><h1>Nueva orden de servicio</h1><p class="subtitulo">Selecciona el vehículo y agrega los servicios que necesita.</p></div></div>
-@if(errorCarga()) { <div class="alerta" role="alert">{{ errorCarga() }} <button class="boton pequeno" (click)="cargar()">Reintentar</button></div> }
-@if(cargando()) { <p class="estado-pagina">Cargando vehículos y servicios…</p> }
-@else if(!errorCarga()) {
-<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
-@if(error()) { <div class="alerta" role="alert">{{ error() }}</div> }
-<div class="orden-layout"><div><section class="tarjeta bloque"><h2>Datos del vehículo</h2><div class="campos"><div class="campo"><label for="vehiculo-orden">Vehículo *</label><select id="vehiculo-orden" formControlName="vehiculoId"><option [ngValue]="null">Selecciona un vehículo</option>@for(v of vehiculos();track v.id) { <option [ngValue]="v.id">{{ v.placa }} · {{ v.clienteNombre }}</option> }</select><app-field-error [control]="form.controls.vehiculoId" [servidor]="errores()['vehiculoId']" mensaje="Selecciona un vehículo." /></div>
-<div class="campo"><label for="kilometraje">Kilometraje actual *</label><input id="kilometraje" type="number" formControlName="kilometraje" min="0" max="9999999" step="1" placeholder="Ej. 46000" /><app-field-error [control]="form.controls.kilometraje" [servidor]="errores()['kilometraje']" mensaje="Ingresa un kilometraje entero entre 0 y 9999999." /><small class="ayuda">Debe ser igual o mayor al de la última visita registrada.</small></div></div></section>
-<section class="tarjeta bloque"><div class="encabezado"><h2>Servicios solicitados</h2><span class="ayuda">{{ detalles.length }} / 10 servicios</span></div><div formArrayName="detalles">
-@for(linea of detalles.controls;track linea;let i=$index) { <div class="linea" [formGroupName]="i"><div class="campo servicio-linea"><label [for]="'servicio-'+i">Servicio {{ i+1 }}</label><select [id]="'servicio-'+i" formControlName="servicioId"><option [ngValue]="null">Selecciona un servicio</option>@for(s of disponibles();track s.id) { <option [ngValue]="s.id" [disabled]="usado(s.id,i)">{{ s.codigo }} · {{ s.nombre }}</option> }</select><app-field-error [control]="linea.controls.servicioId" [servidor]="errores()['detalles['+i+'].servicioId']" mensaje="Selecciona un servicio." /></div>
-<div class="campo cantidad-linea"><label [for]="'cantidad-'+i">Cantidad</label><input [id]="'cantidad-'+i" type="number" min="1" max="5" step="1" formControlName="cantidad" /><app-field-error [control]="linea.controls.cantidad" [servidor]="errores()['detalles['+i+'].cantidad']" mensaje="Entre 1 y 5 unidades." /></div><div class="importe-linea"><small>Subtotal</small><strong>{{ lineas()[i]?.subtotal ?? 0 | currency:'PEN':'S/ ':'1.2-2' }}</strong><span class="ayuda">{{ lineas()[i]?.precio ?? 0 | currency:'PEN':'S/ ':'1.2-2' }} c/u</span></div><button type="button" class="boton pequeno peligro quitar" [attr.aria-label]="'Quitar servicio '+(i+1)" (click)="quitar(i)" [disabled]="guardando()">×</button></div> }
-@empty { <p class="aviso">Agrega al menos un servicio a la orden.</p> }
-</div>@if(repetidos()) { <p class="error-campo">No puedes repetir el mismo servicio.</p> }<app-field-error [control]="form.controls.detalles" [servidor]="errores()['detalles']" mensaje="La orden debe contener entre 1 y 10 servicios." /><button type="button" class="boton" (click)="agregar()" [disabled]="detalles.length>=10 || guardando()">+ Agregar servicio</button></section></div>
-<aside class="tarjeta resumen"><p class="etiqueta">Resumen de atención</p><h2>Total de la orden</h2><p class="total" data-testid="total-orden">{{ total() | currency:'PEN':'S/ ':'1.2-2' }}</p><p class="ayuda">Revisa los servicios y las cantidades antes de registrar.</p><div class="resumen-dato"><span>Servicios</span><strong>{{ detalles.length }}</strong></div><button type="submit" class="boton principal" [disabled]="guardando() || !detalles.length || !vehiculos().length || !disponibles().length">{{ guardando() ? 'Registrando…' : 'Registrar orden' }}</button><a class="boton" routerLink="/ordenes">Cancelar</a></aside></div></form> }</section>
+<section class="pagina">
+  <a class="volver" routerLink="/ordenes">← Volver a órdenes</a>
+  <div class="encabezado">
+    <div>
+      <p class="etiqueta">Recepción del taller</p>
+      <h1>Nueva orden de servicio</h1>
+      <p class="subtitulo">Selecciona el vehículo y agrega los servicios que necesita.</p>
+    </div>
+  </div>
+  @if (errorCarga()) {
+    <div class="alerta" role="alert">
+      {{ errorCarga() }} <button class="boton pequeno" (click)="cargar()">Reintentar</button>
+    </div>
+  }
+  @if (cargando()) {
+    <p class="estado-pagina">Cargando vehículos y servicios…</p>
+  } @else if (!errorCarga()) {
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+      @if (error()) {
+        <div class="alerta" role="alert">{{ error() }}</div>
+      }
+      <div class="orden-layout">
+        <div>
+          <section class="tarjeta bloque">
+            <h2>Datos del vehículo</h2>
+            <div class="campos">
+              <div class="campo">
+                <label for="vehiculo-orden">Vehículo *</label
+                ><select id="vehiculo-orden" formControlName="vehiculoId">
+                  <option [ngValue]="null">Selecciona un vehículo</option>
+                  @for (v of vehiculos(); track v.id) {
+                    <option [ngValue]="v.id">{{ v.placa }} · {{ v.clienteNombre }}</option>
+                  }</select
+                ><app-field-error
+                  [control]="form.controls.vehiculoId"
+                  [servidor]="errores()['vehiculoId']"
+                  mensaje="Selecciona un vehículo."
+                />
+              </div>
+              <div class="campo">
+                <label for="kilometraje">Kilometraje actual *</label
+                ><input
+                  id="kilometraje"
+                  type="number"
+                  formControlName="kilometraje"
+                  min="0"
+                  max="9999999"
+                  step="1"
+                  placeholder="Ej. 46000"
+                /><app-field-error
+                  [control]="form.controls.kilometraje"
+                  [servidor]="errores()['kilometraje']"
+                  mensaje="Ingresa un kilometraje entero entre 0 y 9999999."
+                /><small class="ayuda"
+                  >Debe ser igual o mayor al de la última visita registrada.</small
+                >
+              </div>
+            </div>
+          </section>
+          <section class="tarjeta bloque">
+            <div class="encabezado">
+              <h2>Servicios solicitados</h2>
+              <span class="ayuda">{{ detalles.length }} / 10 servicios</span>
+            </div>
+            <div formArrayName="detalles">
+              @for (linea of detalles.controls; track linea; let i = $index) {
+                <div class="linea" [formGroupName]="i">
+                  <div class="campo servicio-linea">
+                    <label [for]="'servicio-' + i">Servicio {{ i + 1 }}</label
+                    ><select [id]="'servicio-' + i" formControlName="servicioId">
+                      <option [ngValue]="null">Selecciona un servicio</option>
+                      @for (s of disponibles(); track s.id) {
+                        <option [ngValue]="s.id" [disabled]="usado(s.id, i)">
+                          {{ s.codigo }} · {{ s.nombre }}
+                        </option>
+                      }</select
+                    ><app-field-error
+                      [control]="linea.controls.servicioId"
+                      [servidor]="errores()['detalles[' + i + '].servicioId']"
+                      mensaje="Selecciona un servicio."
+                    />
+                  </div>
+                  <div class="campo cantidad-linea">
+                    <label [for]="'cantidad-' + i">Cantidad</label
+                    ><input
+                      [id]="'cantidad-' + i"
+                      type="number"
+                      min="1"
+                      max="5"
+                      step="1"
+                      formControlName="cantidad"
+                    /><app-field-error
+                      [control]="linea.controls.cantidad"
+                      [servidor]="errores()['detalles[' + i + '].cantidad']"
+                      mensaje="Entre 1 y 5 unidades."
+                    />
+                  </div>
+                  <div class="importe-linea">
+                    <small>Subtotal</small
+                    ><strong>{{
+                      lineas()[i]?.subtotal ?? 0 | currency: 'PEN' : 'S/ ' : '1.2-2'
+                    }}</strong
+                    ><span class="ayuda"
+                      >{{ lineas()[i]?.precio ?? 0 | currency: 'PEN' : 'S/ ' : '1.2-2' }} c/u</span
+                    >
+                  </div>
+                  <button
+                    type="button"
+                    class="boton pequeno peligro quitar"
+                    [attr.aria-label]="'Quitar servicio ' + (i + 1)"
+                    (click)="quitar(i)"
+                    [disabled]="guardando()"
+                  >
+                    ×
+                  </button>
+                </div>
+              } @empty {
+                <p class="aviso">Agrega al menos un servicio a la orden.</p>
+              }
+            </div>
+            @if (repetidos()) {
+              <p class="error-campo">No puedes repetir el mismo servicio.</p>
+            }
+            <app-field-error
+              [control]="form.controls.detalles"
+              [servidor]="errores()['detalles']"
+              mensaje="La orden debe contener entre 1 y 10 servicios."
+            /><button
+              type="button"
+              class="boton"
+              (click)="agregar()"
+              [disabled]="detalles.length >= 10 || guardando()"
+            >
+              + Agregar servicio
+            </button>
+          </section>
+        </div>
+        <aside class="tarjeta resumen">
+          <p class="etiqueta">Resumen de atención</p>
+          <h2>Total de la orden</h2>
+          <p class="total" data-testid="total-orden">
+            {{ total() | currency: 'PEN' : 'S/ ' : '1.2-2' }}
+          </p>
+          <p class="ayuda">Revisa los servicios y las cantidades antes de registrar.</p>
+          <div class="resumen-dato">
+            <span>Servicios</span><strong>{{ detalles.length }}</strong>
+          </div>
+          <button
+            type="submit"
+            class="boton principal"
+            [disabled]="
+              guardando() || !detalles.length || !vehiculos().length || !disponibles().length
+            "
+          >
+            {{ guardando() ? 'Registrando…' : 'Registrar orden' }}</button
+          ><a class="boton" routerLink="/ordenes">Cancelar</a>
+        </aside>
+      </div>
+    </form>
+  }
+</section>

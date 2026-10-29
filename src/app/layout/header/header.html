@@ -1,7 +1,5 @@
 <header class="header">
-  <button type="button" aria-label="Alternar menú" (click)="toggleMenu.emit()">
-    ☰
-  </button>
+  <button type="button" aria-label="Alternar menú" (click)="toggleMenu.emit()">☰</button>
 
   <a routerLink="/inicio" class="marca"><img src="autoandes.svg" alt="" /> AutoAndes</a>
 
@@ -17,7 +15,9 @@
       <div class="usuario-superior">
         <span class="nombre">{{ s.nombreCompleto }}</span>
       </div>
-      <span class="detalle">{{ s.roles.join(' · ') }} · expira {{ s.expiraEn | date:'HH:mm' }}</span>
+      <span class="detalle"
+        >{{ s.roles.join(' · ') }} · expira {{ s.expiraEn | date: 'HH:mm' }}</span
+      >
     </div>
     <button type="button" class="btn-salir" (click)="salir()">Cerrar sesión</button>
   }

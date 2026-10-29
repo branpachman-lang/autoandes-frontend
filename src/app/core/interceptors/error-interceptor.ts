@@ -11,7 +11,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
-      if (err.status === 401 && req.url.startsWith(`${environment.apiUrl}/`) && !req.url.endsWith('/auth/login')) {
+      if (
+        err.status === 401 &&
+        req.url.startsWith(`${environment.apiUrl}/`) &&
+        !req.url.endsWith('/auth/login')
+      ) {
         auth.cerrarSesion('expirada', router.url);
       }
       return throwError(() => err);

@@ -22,8 +22,9 @@ export class AuthService {
   readonly sesion = this.sesionActual.asReadonly();
   readonly autenticado = computed(() => this.sesionActual() !== null);
   readonly segundosRestantes = signal(0);
-  readonly porVencer = computed(() => this.autenticado() &&
-    this.segundosRestantes() > 0 && this.segundosRestantes() <= 120);
+  readonly porVencer = computed(
+    () => this.autenticado() && this.segundosRestantes() > 0 && this.segundosRestantes() <= 120,
+  );
   readonly avisoOculto = signal(false);
 
   constructor() {
@@ -37,7 +38,7 @@ export class AuthService {
 
   login(credenciales: LoginRequest): Observable<Sesion> {
     return this.http.post<LoginResponse>(`${this.url}/login`, credenciales).pipe(
-      map(respuesta => ({
+      map((respuesta) => ({
         token: respuesta.token,
         expiraEn: Date.now() + respuesta.expiraEnSegundos * 1000,
         username: respuesta.username,
@@ -45,7 +46,7 @@ export class AuthService {
         roles: respuesta.roles,
         permisos: respuesta.permisos,
       })),
-      tap(sesion => this.iniciar(sesion)),
+      tap((sesion) => this.iniciar(sesion)),
     );
   }
 
@@ -121,11 +122,16 @@ export class AuthService {
       if (!texto) return null;
       const sesion: Sesion = JSON.parse(texto);
       if (
-        typeof sesion.token !== 'string' || !sesion.token ||
-        typeof sesion.username !== 'string' || typeof sesion.nombreCompleto !== 'string' ||
-        !Number.isFinite(sesion.expiraEn) || Date.now() >= sesion.expiraEn ||
-        !Array.isArray(sesion.roles) || !sesion.roles.every(rol => typeof rol === 'string') ||
-        !Array.isArray(sesion.permisos) || !sesion.permisos.every(permiso => typeof permiso === 'string')
+        typeof sesion.token !== 'string' ||
+        !sesion.token ||
+        typeof sesion.username !== 'string' ||
+        typeof sesion.nombreCompleto !== 'string' ||
+        !Number.isFinite(sesion.expiraEn) ||
+        Date.now() >= sesion.expiraEn ||
+        !Array.isArray(sesion.roles) ||
+        !sesion.roles.every((rol) => typeof rol === 'string') ||
+        !Array.isArray(sesion.permisos) ||
+        !sesion.permisos.every((permiso) => typeof permiso === 'string')
       ) {
         sessionStorage.removeItem(CLAVE_SESION);
         return null;

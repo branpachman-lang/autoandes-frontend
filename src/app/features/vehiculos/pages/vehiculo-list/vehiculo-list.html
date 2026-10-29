@@ -1,6 +1,101 @@
-<section class="pagina"><div class="encabezado"><div><p class="etiqueta">Atención al cliente</p><h1>Vehículos</h1><p class="subtitulo">Consulta los vehículos y sus propietarios.</p></div><a class="boton principal" routerLink="/vehiculos/nuevo" *appSiPermiso="'VEHICULO_ESCRIBIR'">+ Nuevo vehículo</a></div>
-@if(error()) { <div class="alerta" role="alert">{{ error() }} <button class="boton pequeno" (click)="cargar()">Reintentar</button></div> }
-<div class="tarjeta"><div class="controles"><label for="buscar-vehiculo">Buscar vehículo<input id="buscar-vehiculo" placeholder="Placa, marca o cliente" [value]="filtro()" (input)="filtro.set($any($event.target).value)" /></label><label for="filtro-cliente">Cliente<select id="filtro-cliente" [value]="clienteId()" (change)="filtrarCliente($any($event.target).value)"><option value="">Todos los clientes</option>@for(c of clientes();track c.id) { <option [value]="c.id">{{ c.nombres }}</option> }</select></label></div>
-@if(cargando()) { <p class="estado-pagina" role="status">Cargando vehículos…</p> }
-@else { <div class="tabla-contenedor"><table><thead><tr><th>Placa</th><th>Marca / modelo</th><th>Año</th><th>Cliente</th><th *appSiPermiso="'VEHICULO_ESCRIBIR'">Acciones</th></tr></thead><tbody>@for(v of filtrados();track v.id) { <tr><td><strong>{{ v.placa }}</strong></td><td>{{ v.marca }} {{ v.modelo }}</td><td>{{ v.anio }}</td><td>{{ v.clienteNombre }}</td><td *appSiPermiso="'VEHICULO_ESCRIBIR'"><div class="acciones"><a class="boton pequeno" [routerLink]="['/vehiculos',v.id,'editar']">Editar</a><button class="boton pequeno peligro" (click)="pendiente.set(v)">Eliminar</button></div></td></tr> } @empty { <tr><td colspan="5" class="estado-pagina">No hay vehículos que coincidan con la búsqueda.</td></tr> }</tbody></table></div><p class="pie-lista">{{ filtrados().length }} vehículos encontrados</p> }</div></section>
-@if(pendiente();as v) { <div class="modal-fondo"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="eliminar-vehiculo"><h2 id="eliminar-vehiculo">Eliminar vehículo</h2><p>¿Deseas eliminar el vehículo <strong>{{ v.placa }}</strong>? Solo se permite si no tiene órdenes.</p><div class="acciones"><button class="boton" (click)="pendiente.set(null)" [disabled]="eliminando()">Cancelar</button><button class="boton peligro" (click)="eliminar()" [disabled]="eliminando()">{{ eliminando() ? 'Eliminando…' : 'Confirmar eliminación' }}</button></div></section></div> }
+<section class="pagina">
+  <div class="encabezado">
+    <div>
+      <p class="etiqueta">Atención al cliente</p>
+      <h1>Vehículos</h1>
+      <p class="subtitulo">Consulta los vehículos y sus propietarios.</p>
+    </div>
+    <a class="boton principal" routerLink="/vehiculos/nuevo" *appSiPermiso="'VEHICULO_ESCRIBIR'"
+      >+ Nuevo vehículo</a
+    >
+  </div>
+  @if (error()) {
+    <div class="alerta" role="alert">
+      {{ error() }} <button class="boton pequeno" (click)="cargar()">Reintentar</button>
+    </div>
+  }
+  <div class="tarjeta">
+    <div class="controles">
+      <label for="buscar-vehiculo"
+        >Buscar vehículo<input
+          id="buscar-vehiculo"
+          placeholder="Placa, marca o cliente"
+          [value]="filtro()"
+          (input)="filtro.set($any($event.target).value)" /></label
+      ><label for="filtro-cliente"
+        >Cliente<select
+          id="filtro-cliente"
+          [value]="clienteId()"
+          (change)="filtrarCliente($any($event.target).value)"
+        >
+          <option value="">Todos los clientes</option>
+          @for (c of clientes(); track c.id) {
+            <option [value]="c.id">{{ c.nombres }}</option>
+          }
+        </select></label
+      >
+    </div>
+    @if (cargando()) {
+      <p class="estado-pagina" role="status">Cargando vehículos…</p>
+    } @else {
+      <div class="tabla-contenedor">
+        <table>
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Marca / modelo</th>
+              <th>Año</th>
+              <th>Cliente</th>
+              <th *appSiPermiso="'VEHICULO_ESCRIBIR'">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of filtrados(); track v.id) {
+              <tr>
+                <td>
+                  <strong>{{ v.placa }}</strong>
+                </td>
+                <td>{{ v.marca }} {{ v.modelo }}</td>
+                <td>{{ v.anio }}</td>
+                <td>{{ v.clienteNombre }}</td>
+                <td *appSiPermiso="'VEHICULO_ESCRIBIR'">
+                  <div class="acciones">
+                    <a class="boton pequeno" [routerLink]="['/vehiculos', v.id, 'editar']">Editar</a
+                    ><button class="boton pequeno peligro" (click)="pendiente.set(v)">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="estado-pagina">
+                  No hay vehículos que coincidan con la búsqueda.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="pie-lista">{{ filtrados().length }} vehículos encontrados</p>
+    }
+  </div>
+</section>
+@if (pendiente(); as v) {
+  <div class="modal-fondo">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="eliminar-vehiculo">
+      <h2 id="eliminar-vehiculo">Eliminar vehículo</h2>
+      <p>
+        ¿Deseas eliminar el vehículo <strong>{{ v.placa }}</strong
+        >? Solo se permite si no tiene órdenes.
+      </p>
+      <div class="acciones">
+        <button class="boton" (click)="pendiente.set(null)" [disabled]="eliminando()">
+          Cancelar</button
+        ><button class="boton peligro" (click)="eliminar()" [disabled]="eliminando()">
+          {{ eliminando() ? 'Eliminando…' : 'Confirmar eliminación' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}

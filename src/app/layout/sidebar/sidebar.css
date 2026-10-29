@@ -1,0 +1,11 @@
+.sidebar {
+  height: 100%;
+  padding: 16px 12px;
+  background: white;
+  border-right: 1px solid #e3e8f0;
+}
+
+p { padding: 0 12px; color: #6b7280; font-size: 12px; text-transform: uppercase; }
+a { display: block; padding: 11px 12px; border-radius: 8px; color: #1f2937; text-decoration: none; }
+a:hover { background: #eef2f8; }
+a.activo { background: #0f2e5c; color: white; }

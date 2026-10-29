@@ -1,0 +1,10 @@
+<section class="pagina"><a class="volver" routerLink="/servicios">← Volver a servicios</a><div class="encabezado"><div><p class="etiqueta">Catálogo del taller</p><h1>{{ id() ? 'Editar servicio' : 'Nuevo servicio' }}</h1><p class="subtitulo">Define el precio y el tiempo de atención del servicio.</p></div></div>
+@if(error()) { <div class="alerta" role="alert">{{ error() }}</div> }
+@if(cargando()) { <p class="estado-pagina">Cargando servicio…</p> }
+@else { <form class="tarjeta formulario" [formGroup]="form" (ngSubmit)="guardar()" novalidate><div class="campos">
+  <div class="campo"><label for="codigo">Código *</label><input id="codigo" formControlName="codigo" placeholder="SRV-009" maxlength="7" /><app-field-error [control]="form.controls.codigo" [servidor]="errores()['codigo']" mensaje="Usa el formato SRV-000." /></div>
+  <div class="campo"><label for="nombre">Nombre *</label><input id="nombre" formControlName="nombre" maxlength="80" /><app-field-error [control]="form.controls.nombre" [servidor]="errores()['nombre']" mensaje="Escribe un nombre de 3 a 80 caracteres." /></div>
+  <div class="campo"><label for="precio">Precio (S/) *</label><input id="precio" type="number" formControlName="precio" min="0.01" step="0.01" /><app-field-error [control]="form.controls.precio" [servidor]="errores()['precio']" mensaje="Ingresa un precio mayor que cero, con hasta dos decimales." /></div>
+  <div class="campo"><label for="duracion">Duración (minutos) *</label><input id="duracion" type="number" formControlName="duracionMin" min="15" max="480" step="1" /><app-field-error [control]="form.controls.duracionMin" [servidor]="errores()['duracionMin']" mensaje="La duración debe ser de 15 a 480 minutos enteros." /></div>
+  <label class="estado-check"><input type="checkbox" formControlName="activo" /> Servicio activo</label>
+</div><div class="acciones"><button class="boton principal" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando…' : (id() ? 'Actualizar servicio' : 'Registrar servicio') }}</button><a class="boton" routerLink="/servicios">Cancelar</a></div></form> }</section>

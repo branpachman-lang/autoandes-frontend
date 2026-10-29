@@ -1,0 +1,24 @@
+<header class="header">
+  <button type="button" aria-label="Alternar menú" (click)="toggleMenu.emit()">
+    ☰
+  </button>
+
+  <a routerLink="/inicio" class="marca"><img src="autoandes.svg" alt="" /> AutoAndes</a>
+
+  <nav class="enlaces">
+    <a routerLink="/inicio">Inicio</a>
+    <a href="http://localhost:8080/swagger-ui.html" target="_blank" rel="noopener noreferrer">
+      API
+    </a>
+  </nav>
+
+  @if (auth.sesion(); as s) {
+    <div class="usuario">
+      <div class="usuario-superior">
+        <span class="nombre">{{ s.nombreCompleto }}</span>
+      </div>
+      <span class="detalle">{{ s.roles.join(' · ') }} · expira {{ s.expiraEn | date:'HH:mm' }}</span>
+    </div>
+    <button type="button" class="btn-salir" (click)="salir()">Cerrar sesión</button>
+  }
+</header>

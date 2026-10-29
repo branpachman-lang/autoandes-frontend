@@ -1,0 +1,15 @@
+<section class="pagina">
+  <div class="encabezado"><div><p class="etiqueta">Catálogo del taller</p><h1>Servicios</h1><p class="subtitulo">Precios, duración y disponibilidad de cada servicio.</p></div>
+    <a class="boton principal" routerLink="/servicios/nuevo" *appSiPermiso="'SERVICIO_ESCRIBIR'">+ Nuevo servicio</a></div>
+  @if(error()) { <div class="alerta" role="alert">{{ error() }} <button class="boton pequeno" (click)="cargar()">Reintentar</button></div> }
+  <div class="tarjeta"><div class="controles"><label for="buscar-servicio">Buscar servicio<input id="buscar-servicio" placeholder="Código o nombre" [value]="filtro()" (input)="filtro.set($any($event.target).value)" /></label>
+    <label for="estado-servicio">Disponibilidad<select id="estado-servicio" [value]="estado()" (change)="estado.set($any($event.target).value)"><option value="todos">Todos</option><option value="activos">Activos</option><option value="inactivos">Inactivos</option></select></label></div>
+    @if(cargando()) { <p class="estado-pagina" role="status">Cargando servicios…</p> }
+    @else { <div class="tabla-contenedor"><table><thead><tr><th>Código</th><th>Servicio</th><th class="numero">Precio</th><th>Duración</th><th>Estado</th><th *appSiPermiso="'SERVICIO_ESCRIBIR'">Acciones</th></tr></thead><tbody>
+      @for(s of filtrados(); track s.id) { <tr><td><strong>{{ s.codigo }}</strong></td><td>{{ s.nombre }}</td><td class="numero">{{ s.precio | currency:'PEN':'S/ ':'1.2-2' }}</td><td>{{ s.duracionMin }} min</td><td><span class="badge" [class.inactivo]="!s.activo">{{ s.activo ? 'Activo' : 'Inactivo' }}</span></td>
+      <td *appSiPermiso="'SERVICIO_ESCRIBIR'"><div class="acciones"><a class="boton pequeno" [routerLink]="['/servicios',s.id,'editar']">Editar</a><button class="boton pequeno" (click)="pendiente.set({servicio:s,accion:'estado'})">{{ s.activo ? 'Dar de baja' : 'Activar' }}</button><button class="boton pequeno peligro" (click)="pendiente.set({servicio:s,accion:'eliminar'})">Eliminar</button></div></td></tr> }
+      @empty { <tr><td colspan="6" class="estado-pagina">No hay servicios que coincidan con la búsqueda.</td></tr> }
+    </tbody></table></div><p class="pie-lista">{{ filtrados().length }} servicios encontrados</p> }
+  </div>
+</section>
+@if(pendiente(); as p) { <div class="modal-fondo" (keydown.escape)="!guardando() && pendiente.set(null)"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmar-servicio"><h2 id="confirmar-servicio">{{ p.accion==='eliminar' ? 'Eliminar servicio' : (p.servicio.activo ? 'Dar de baja el servicio' : 'Activar servicio') }}</h2><p>¿Deseas continuar con <strong>{{ p.servicio.nombre }}</strong>?</p>@if(p.accion==='eliminar') { <p>Los servicios utilizados en órdenes deben darse de baja para conservar su historial.</p> }<div class="acciones"><button class="boton" (click)="pendiente.set(null)" [disabled]="guardando()">Cancelar</button><button class="boton principal" (click)="confirmar()" [disabled]="guardando()">{{ guardando() ? 'Procesando…' : 'Confirmar' }}</button></div></section></div> }

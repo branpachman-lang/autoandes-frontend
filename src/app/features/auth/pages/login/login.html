@@ -1,0 +1,42 @@
+<main class="fondo">
+  <section class="login" aria-labelledby="titulo-login">
+    <div class="identidad">
+      <span class="marca-simbolo" aria-hidden="true">⚒</span>
+      <p class="marca">AutoAndes</p>
+    </div>
+    <h1 id="titulo-login">Iniciar sesión</h1>
+    <p class="descripcion">Accede con tu cuenta del taller.</p>
+
+    @if (expirada()) {
+      <div class="aviso" role="status">Su sesión expiró. Inicie sesión nuevamente.</div>
+    }
+    @if (error()) {
+      <div class="alerta" role="alert">{{ error() }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
+      <label for="usuario">Usuario</label>
+      <input id="usuario" formControlName="username" autocomplete="username" autofocus />
+      @if (form.controls.username.touched && form.controls.username.invalid) {
+        <small class="error">Ingrese su usuario.</small>
+      }
+
+      <label for="clave">Contraseña</label>
+      <input id="clave" [type]="verClave() ? 'text' : 'password'"
+        formControlName="password" autocomplete="current-password" />
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <small class="error">Ingrese su contraseña.</small>
+      }
+
+      <label class="ver" for="mostrar-clave">
+        <input id="mostrar-clave" type="checkbox" [checked]="verClave()"
+          (change)="verClave.set(!verClave())" />
+        Mostrar contraseña
+      </label>
+
+      <button type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Ingresando…' : 'Ingresar' }}
+      </button>
+    </form>
+  </section>
+</main>
